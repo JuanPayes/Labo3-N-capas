@@ -30,11 +30,16 @@ public class SpecimenController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<GeneralResponse> getAllSpecimen(){
+    public ResponseEntity<GeneralResponse> getAllSpecimen(
+            @RequestParam(defaultValue = "0")   int page,
+            @RequestParam(defaultValue = "10")  int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder
+    ){
         return buildResponse(
                 "Specimen Found",
                 HttpStatus.OK,
-                specimenService.getAllSpecimens()
+                specimenService.getAllSpecimens(page, size, sortBy, sortOrder)
         );
     }
 

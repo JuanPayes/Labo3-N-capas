@@ -5,11 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.example.sheikahregister.common.SpecimenMapper;
 import org.example.sheikahregister.domain.dto.request.specimen.CreateSpecimenRequest;
 import org.example.sheikahregister.domain.dto.request.specimen.UpdateSpecimenRequest;
+import org.example.sheikahregister.domain.dto.response.PageableResponse;
 import org.example.sheikahregister.domain.dto.response.specimen.SpecimenResponse;
 import org.example.sheikahregister.domain.entities.Specimen;
 import org.example.sheikahregister.exceptions.ResourceNotFoundException;
 import org.example.sheikahregister.repositories.SpecimenRepository;
 import org.example.sheikahregister.services.SpecimenServices;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,14 +36,18 @@ public class SpecimenServicesImpl implements SpecimenServices {
     }
 
     @Override
-    public List<SpecimenResponse> getAllSpecimens() {
-        List<Specimen> specimens = specimenRepository.findAll();
-        if (specimens.isEmpty())
+    public PageableResponse getAllSpecimens(int page, int size, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Specimen> specimenPage = specimenRepository.findAll(pageable);
+
+        if (specimenPage.isEmpty())
             throw new ResourceNotFoundException("No specimens are registered in Hyrule");
 
-        return specimens.stream()
-                .map(specimenMapper::toDto)
-                .collect(Collectors.toList());
+        return specimenMapper.toDtoPage(specimenPage);
     }
 
     @Override
