@@ -7,6 +7,7 @@ import org.example.sheikahregister.domain.dto.request.specimen.CreateSpecimenReq
 import org.example.sheikahregister.domain.dto.request.specimen.UpdateSpecimenRequest;
 import org.example.sheikahregister.domain.dto.response.specimen.SpecimenResponse;
 import org.example.sheikahregister.domain.entities.Specimen;
+import org.example.sheikahregister.exceptions.ResourceNotFoundException;
 import org.example.sheikahregister.repositories.SpecimenRepository;
 import org.example.sheikahregister.services.SpecimenServices;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,5 @@ public class SpecimenServicesImpl implements SpecimenServices {
         specimenRepository.deleteById(id);
         return existSpecimen;
     }
-
-
 
 }
