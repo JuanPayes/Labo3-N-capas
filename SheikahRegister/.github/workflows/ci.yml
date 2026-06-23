@@ -2,7 +2,7 @@ name: CI — Build, Test & Smoke
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   # ── Job 1: compilar y correr tests de Mockito ──────────────────────
