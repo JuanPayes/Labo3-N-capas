@@ -55,6 +55,10 @@ jobs:
           echo "=== Docker compose config (variables expandidas) ==="
           docker compose config
 
+      - name: Verificar usuario en PostgreSQL
+        run: |
+          docker exec sheikah-db psql -U sheikah_user -d HyruleDB -c "\du"
+
       - name: Levantar contenedores
         working-directory: SheikahRegister
         run: docker compose up -d --build
