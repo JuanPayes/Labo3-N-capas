@@ -47,6 +47,14 @@ jobs:
           echo "SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect" >> .env
           echo "SPRING_APPLICATION_NAME=SheikahRegister"               >> .env
 
+      - name: Verificar variables antes de levantar
+        working-directory: SheikahRegister
+        run: |
+          echo "=== Contenido del .env ==="
+          cat .env
+          echo "=== Docker compose config (variables expandidas) ==="
+          docker compose config
+
       - name: Levantar contenedores
         working-directory: SheikahRegister
         run: docker compose up -d --build
