@@ -38,14 +38,14 @@ jobs:
       - name: Crear .env desde secrets de GitHub
         working-directory: SheikahRegister
         run: |
-          echo "DB_NAME=${{ secrets.DB_NAME }}"                                       >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}"                                       >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"                               >> .env
-          echo "DB_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}"              >> .env
-          echo "SPRING_JPA_SHOW_SQL=false"                                            >> .env
-          echo "SPRING_JPA_HIBERNATE_DDL=update"                                      >> .env
+          echo "DB_NAME=HyruleDB"                                        >> .env
+          echo "DB_USER=postgres"                                        >> .env
+          echo "DB_PASSWORD=nueva_password"                              >> .env
+          echo "DB_URL=jdbc:postgresql://db:5432/HyruleDB"              >> .env
+          echo "SPRING_JPA_SHOW_SQL=false"                              >> .env
+          echo "SPRING_JPA_HIBERNATE_DDL=update"                        >> .env
           echo "SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect" >> .env
-          echo "SPRING_APPLICATION_NAME=sheikah-register"                             >> .env
+          echo "SPRING_APPLICATION_NAME=SheikahRegister"               >> .env
 
       - name: Levantar contenedores
         working-directory: SheikahRegister
