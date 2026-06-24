@@ -66,10 +66,19 @@ jobs:
       - name: Ver logs de los contenedores
         if: always()
         run: |
-          sleep 15
           echo "=== CONTENEDORES ACTIVOS ==="
           docker ps -a
           echo "=== LOGS DE LA APP ==="
+          docker compose -f SheikahRegister/docker-compose.yml logs app
+          
+      - name: Ver estado inmediato
+        if: always()
+        run: |
+          echo "=== Todos los contenedores (incluyendo parados) ==="
+          docker ps -a
+          echo "=== Logs de db ==="
+          docker compose -f SheikahRegister/docker-compose.yml logs db
+          echo "=== Logs de app ==="
           docker compose -f SheikahRegister/docker-compose.yml logs app
 
       - name: Esperar a que la API esté lista (máx 90s)
