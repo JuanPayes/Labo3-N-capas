@@ -41,7 +41,7 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}"                                       >> .env
           echo "DB_USER=${{ secrets.DB_USER }}"                                       >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"                               >> .env
-          echo "DB_URL=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}"       >> .env
+          echo "DB_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}"              >> .env
           echo "SPRING_JPA_SHOW_SQL=false"                                            >> .env
           echo "SPRING_JPA_HIBERNATE_DDL=update"                                      >> .env
           echo "SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect" >> .env
