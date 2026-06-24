@@ -47,6 +47,7 @@ jobs:
           echo "SPRING_APPLICATION_NAME=sheikah-register"                             >> .env
 
       - name: Levantar contenedores
+        working-directory: SheikahRegister
         run: docker compose up -d --build
 
       - name: Esperar a que la API esté lista (máx 90s)
