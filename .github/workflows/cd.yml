@@ -28,5 +28,5 @@ jobs:
           context: ./SheikahRegister
           push: true
           tags: |
-            tu-usuario-dockerhub/sheikah-register:latest
-            tu-usuario-dockerhub/sheikah-register:sha-${{ github.sha }}
+            juanpayes/sheikah-register:latest
+            juanpayes/sheikah-register:sha-${{ github.sha }}
