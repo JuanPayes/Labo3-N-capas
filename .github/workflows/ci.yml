@@ -1,0 +1,99 @@
+name: CI — Build, Test & Smoke
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ── Job 1: compilar y correr tests de Mockito ──────────────────────
+  build-and-test:
+    name: Compile & Unit Tests (Mockito)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compilar y ejecutar tests
+        working-directory: SheikahRegister
+        run: ./mvnw verify -B
+
+  # ── Job 2: smoke test levantando los contenedores ──────────────────
+  smoke-test:
+    name: Smoke Test — Docker Compose + curl
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Crear .env desde secrets de GitHub
+        working-directory: SheikahRegister
+        run: |
+          echo "DB_NAME=HyruleDB"                                        >> .env
+          echo "DB_USER=sheikah_user"                                        >> .env
+          echo "DB_PASSWORD=nueva_password"                              >> .env
+          echo "DB_URL=jdbc:postgresql://db:5432/HyruleDB"              >> .env
+          echo "SPRING_JPA_SHOW_SQL=false"                              >> .env
+          echo "SPRING_JPA_HIBERNATE_DDL=update"                        >> .env
+          echo "SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect" >> .env
+          echo "SPRING_APPLICATION_NAME=SheikahRegister"               >> .env
+
+      - name: Verificar variables antes de levantar
+        working-directory: SheikahRegister
+        run: |
+          echo "=== Contenido del .env ==="
+          cat .env
+          echo "=== Docker compose config (variables expandidas) ==="
+          docker compose config
+
+      - name: Levantar contenedores
+        working-directory: SheikahRegister
+        run: docker compose up -d --build
+
+      - name: Ver logs de los contenedores
+        if: always()
+        run: |
+          echo "=== CONTENEDORES ACTIVOS ==="
+          docker ps -a
+          echo "=== LOGS DE LA APP ==="
+          docker compose -f SheikahRegister/docker-compose.yml logs app
+          
+      - name: Ver estado inmediato
+        if: always()
+        run: |
+          echo "=== Todos los contenedores (incluyendo parados) ==="
+          docker ps -a
+          echo "=== Logs de db ==="
+          docker compose -f SheikahRegister/docker-compose.yml logs db
+          echo "=== Logs de app ==="
+          docker compose -f SheikahRegister/docker-compose.yml logs app
+
+      - name: Esperar a que la API esté lista (máx 90s)
+        run: |
+          echo "Esperando a que la API responda..."
+          for i in $(seq 1 18); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ API lista (HTTP 200)"
+              exit 0
+            fi
+            echo "Intento $i/18 — HTTP $STATUS — esperando 5s..."
+            sleep 5
+          done
+          echo "❌ La API no respondió a tiempo"
+          docker compose logs app
+          exit 1
+
+      - name: Bajar contenedores
+        if: always()
+        working-directory: SheikahRegister
+        run: docker compose down -v

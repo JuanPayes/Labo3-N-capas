@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface SpecimenServices {
     public SpecimenResponse createSpecimen(CreateSpecimenRequest request);
-    PageableResponse getAllSpecimens(int page, int size, String sortBy, String sortOrder);
+    public PageableResponse getAllSpecimens(int page, int size, String sortBy, String sortOrder);
     public SpecimenResponse getSpecimenById(UUID id);
     public SpecimenResponse updateSpecimen(UUID id, UpdateSpecimenRequest request);
     public SpecimenResponse deleteSpecimen(UUID id);
